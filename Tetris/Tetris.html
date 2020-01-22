@@ -168,9 +168,28 @@
             }
 
             moveDown() {
-                if (this.xCoord == boardHeight - this.type.length) {
-                    console.log("landed!");
-                    this.xCoord -= 1;
+                if (this.type.length == 4) {
+                    if (this.orient == 0 && this.xCoord == boardHeight - this.type.length + 2) {
+                        this.xCoord -= 1;
+                    }
+                    if (this.orient == 2 && this.xCoord == boardHeight - this.type.length + 1) {
+                        this.xCoord -= 1;
+                    }
+                    if ((this.orient == 1 && this.xCoord == boardHeight - this.type.length) ||
+                        (this.orient == 3 && this.xCoord == boardHeight - this.type.length)) {
+                        this.xCoord -= 1;
+                    }
+                }
+                else {
+                    if (this.orient == 0 && this.xCoord == boardHeight - this.type.length + 1) {
+                        this.xCoord -= 1;
+                    }
+                    if (this.orient != 0 && this.xCoord == boardHeight - this.type.length) {
+                        console.log("landed!");
+                        this.xCoord -= 1;
+                        // fix active piece to board matrix here and create new active piece
+                        fixTetrominoToBoard(this.xCoord, this.yCoord);
+                    }
                 }
                 this.erase();
                 this.xCoord += 1;
@@ -257,6 +276,10 @@
                     if (this.orient == 3) {
                         this.moveLeft();
                     }
+                    else if (this.orient == 0 && this.xCoord == boardHeight - this.type.length + 1) {
+                        this.erase();
+                        this.xCoord -= 1;
+                    }
                     else if (this.orient == 1) {
                         this.moveRight();
                     }
@@ -297,6 +320,21 @@
             // }
         }
 
+        function fixTetrominoToBoard(x, y) {
+            console.log("Xcoord: " + x + ", Ycoord: " + y);
+
+            for (let i = 0; i < boardHeight; i++) {
+                console.log("fix-outerForLoop");
+                for (let j = 0; j < boardWidth; j++) {
+                    console.log("fix-innerForLoop");
+                    if (i == x && j == y) {
+                        console.log("fix-ifStatement");
+                        boardMatrix[i][j] = 1;
+                    }
+                }
+            }
+        }
+
         document.addEventListener('keydown', function (e) {
             //console.log(e.keyCode);
             if (e.keyCode == 87) {
@@ -319,7 +357,7 @@
             console.log(activeTet.xCoord + ", " + activeTet.yCoord);
         });
 
-        let selectedPiece = 0;
+        let selectedPiece = 6;
         activeTet = new Tetromino(tetrominoType[selectedPiece], tetrominoColor[selectedPiece], 0, 0, 0);
         activeTet.draw();
     
