@@ -341,13 +341,20 @@
             console.log("Xcoord: " + x + ", Ycoord: " + y);
 
             let k = 0, l = 0;
+            //let m = 0, n = 0;
+            //let o = 0; p = 0;
             for (let i = 0; i < boardHeight; i++) {
                 console.log("fix-outerForLoop");
                 for (let j = 0; j < boardWidth; j++) {
                     console.log("fix-innerForLoop");
 
-
-
+                    if (i >= x && j >= y) {
+                        boardMatrix[i][j] = type[k][l];
+                    }
+                    k++;
+                    if (k == type.length) {
+                        k = 0;
+                    }
 
 
                     
@@ -362,11 +369,11 @@
                 //             k = 0;
                 //         }
                 //     }
-                // }
-                // l++;
-                // if (l == type.length) {
-                //     l = 0;
-                // }
+                }
+                l++;
+                if (l == type.length) {
+                    l = 0;
+                }
             }
         }
 
