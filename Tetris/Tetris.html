@@ -352,36 +352,42 @@
                 
                 if (piece.type.length == 4) {
                         if (piece.orient == 0 && piece.xCoord == boardHeight - piece.type.length + 2) {
-                            piece.xCoord -= 1;
+                            //piece.xCoord -= 1;
+                            return false;
                         }
                         if (piece.orient == 2 && piece.xCoord == boardHeight - piece.type.length + 1) {
-                            piece.xCoord -= 1;
+                            //piece.xCoord -= 1;
+                            return false;
                         }
                         if ((piece.orient == 1 && piece.xCoord == boardHeight - piece.type.length) ||
                             (piece.orient == 3 && piece.xCoord == boardHeight - piece.type.length)) {
-                            piece.xCoord -= 1;
+                            //piece.xCoord -= 1;
+                            return false;
                         }
                     }
                     else if (piece.type.length == 2) {
                         if (piece.xCoord == boardHeight - piece.type.length) {
-                            piece.erase();
-                            piece.xCoord -= 1;
-                            piece.draw();
+                            // piece.erase();
+                            // piece.xCoord -= 1;
+                            // piece.draw();
+                            return false;
                         }
                     }
                     else {
                         if (piece.orient == 0 && piece.xCoord == boardHeight - piece.type.length + 1) {
-                            piece.xCoord -= 1;
+                            // piece.xCoord -= 1;
+                            return false;
                         }
                         if (piece.orient != 0 && piece.xCoord == boardHeight - piece.type.length) {
                             console.log("landed!");
-                            piece.xCoord -= 1;
+                            // piece.xCoord -= 1;
                             // fix active piece to board matrix here and create new active piece
                             //fixTetrominoToBoard(this.type, this.xCoord, this.yCoord);
                             // create new tetromino
                             createNew();
                         }
                     }
+                    return true;
             }
 
             // from moveLeft()
@@ -389,89 +395,114 @@
                 
                 if (piece.type.length == 4) {
                     if ((piece.orient == 1) && piece.yCoord == -2) {
-                        piece.yCoord += 1;
+                        // piece.yCoord += 1;
+                        return false;
                     }
                     if ((piece.orient == 3) && piece.yCoord == -1) {
-                        piece.yCoord += 1;
+                        // piece.yCoord += 1;
+                        return false;
                     }
                     if (piece.orient % 2 == 0 && piece.yCoord == 0) {
-                        piece.yCoord += 1;
+                        // piece.yCoord += 1;
+                        return false;
                     }
                 }
                 else {
                     if (piece.orient == 1 && piece.yCoord == -1) {
-                        piece.yCoord += 1;
+                        // piece.yCoord += 1;
+                        return false;
                     }
                     if (piece.orient != 1 && piece.yCoord == 0) {
-                        piece.yCoord += 1;
+                        // piece.yCoord += 1;
+                        return false;
                     }
+                    return true;
                 }
+                return true;
             }
 
             // from moveRight()
             if (direction == "right") {
                 if (piece.type.length == 4) {
                     if ((piece.orient == 1) && piece.yCoord == boardWidth - piece.type.length + 1) {
-                        piece.yCoord -= 1;
+                        // piece.yCoord -= 1;
+                        return false;
                     }
                     if ((piece.orient == 3) && piece.yCoord == boardWidth - piece.type.length + 2) {
-                        piece.yCoord -= 1;
+                        // piece.yCoord -= 1;
+                        return false;
                     }
                     if (piece.orient % 2 == 0 && piece.yCoord == boardWidth - piece.type.length) {
-                        piece.yCoord -= 1;
+                        // piece.yCoord -= 1;
+                        return false;
                     }
                 }
                 else {
                     if (piece.orient == 3 && (piece.yCoord == boardWidth - piece.type.length + 1)) {
-                    piece.yCoord -= 1;
+                        // piece.yCoord -= 1;
+                        return false;
                     }
                     if ((piece.orient != 3) && piece.yCoord == boardWidth - piece.type.length) {
-                        piece.yCoord -= 1;
+                        // piece.yCoord -= 1;
+                        return false;
                     }
+                    return true;
                 }
+                return true;
             }
 
             // from rotate()
             if (piece.type.length == 4) {
                     if ((piece.orient == 0 || piece.orient == 2) && (piece.xCoord == boardHeight - piece.type.length + 1)) {
-                        piece.erase();
-                        piece.xCoord -= 1;
-                        piece.draw();
+                        // piece.erase();
+                        // piece.xCoord -= 1;
+                        // piece.draw();
+                        return false;
                     }
                     else if ((piece.orient == 0 || piece.orient == 2) && (piece.xCoord == boardHeight - piece.type.length + 2)) {
-                        piece.erase();
-                        piece.xCoord -= 2;
-                        piece.draw();
+                        // piece.erase();
+                        // piece.xCoord -= 2;
+                        // piece.draw();
+                        return false;
                     }
                     else if ((piece.orient == 1 && piece.yCoord == boardWidth - piece.type.length + 1) ||
                         (piece.orient == 3 && piece.yCoord == boardWidth - piece.type.length + 1)) {
-                        piece.moveLeft();
+                        // piece.moveLeft();
+                        return false;
                     }
                     else if (piece.orient == 3 && piece.yCoord == boardWidth - piece.type.length + 2) {
-                        piece.moveLeft();
-                        piece.moveLeft();
+                        // piece.moveLeft();
+                        // piece.moveLeft();
+                        return false;
                     }
                     else if (piece.orient == 1 && piece.yCoord == -2) {
-                        piece.moveRight();
-                        piece.moveRight();
+                        // piece.moveRight();
+                        // piece.moveRight();
+                        return false;
                     }
                     else if ((piece.orient == 1 && piece.yCoord == -1) ||
                             (piece.orient == 3 && piece.yCoord == -1)) {
-                        piece.moveRight();
+                        // piece.moveRight();
+                        return false;
                     }
                 }
                 else {
                     if (piece.orient == 3) {
-                        piece.moveLeft();
+                        // piece.moveLeft();
+                        return false;
                     }
                     else if (piece.orient == 0 && piece.xCoord == boardHeight - piece.type.length + 1) {
-                        piece.erase();
-                        piece.xCoord -= 1;
+                        // piece.erase();
+                        // piece.xCoord -= 1;
+                        return false;
                     }
                     else if (piece.orient == 1) {
-                        piece.moveRight();
+                        // piece.moveRight();
+                        return false;
                     }
+                    return true;
                 }
+                return true;
         }
 
         function fixTetrominoToBoard(type, x, y) {
