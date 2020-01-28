@@ -54,6 +54,8 @@
         let boardMatrix = [];
         let activeTet;
         let direction;
+        let blocks = [[],[],[],[]];
+        let blockIndex;
 
         // set-up the grid inside the board
         board.style.gridTemplateColumns = "repeat(" + boardWidth + ", 1fr)";
@@ -145,15 +147,19 @@
             // draw a given tetromino piece inside the board in the given coordinates
             draw() {
                 
+                blockIndex = 0;
                 let temp = this.type;
                 console.log(temp);
                 for (let i = 0; i < temp.length; i++) {
                     for (let j = 0; j < temp.length; j++) {
                         if (temp[i][j] == 1) {
                             document.getElementById('q-' + (i + this.xCoord) + '-' + (j + this.yCoord)).style.backgroundColor = this.color;
+                            blocks[blockIndex] = [i + this.xCoord, j + this.yCoord];
+                            blockIndex++;
                         }
                     }
                 }
+                console.log(blocks);
             }
 
             erase() {
@@ -166,6 +172,7 @@
                             }
                         }
                     }
+                    blocks = [[],[],[],[]];
             }
 
             moveDown() {
@@ -347,162 +354,80 @@
         }
 
         function checkCollision(piece, direction) {
+
+            // if (blocks[0] == blocks[1]) {
+            //     console.log("Fuck they are equal!!!!! :(");
+            // }
+
+            for (let i = piece.type.length - 1; i >= 0; i--) {
+                for (let j = piece.type.length - 1; j >= 0; j--) {
+                    
+                    console.log("attempting block " + (i + piece.xCoord) + ", " + (j + piece.yCoord));
+                    let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
+                    if (temp.style.backgroundColor != "") {
+                        if (document.getElementById('q-' + (i + piece.xCoord + 1) + '-' + (j + piece.yCoord)).style.backgroundColor != "") {
+                            for (let k = 0; k < blocks.length; k++) {
+                                    console.log("about to compare [" + blocks[k][0] + ", " + blocks[k][1] + "]");
+                                    console.log("to [" + (i + piece.xCoord + 1) + ", " + (j + piece.yCoord) + "]");
+                                if ((blocks[k][0] == (i + piece.xCoord + 1)) && (blocks[k][1] == (j + piece.yCoord))) {
+                                    // console.log("compared " + blocks[k][0] + " and " + (i + piece.xCoord + 1));
+                                    // console.log("compared " + blocks[k][1] + " and " + (j + piece.yCoord + 1));
+                                    continue;
+                                }
+                            }
+                            console.log("collision detected!!!");
+                            return true;
+                        }
+                    }
+                    
+                }
+                
+            }
+
+            console.log("NO collision");
+            return false;
+
+            // for (let i = boardHeight - 1; i >= 0; i--) {
+            //     for (let j = boardWidth - 1; j >= 0; j--) {
+                    
+            //         let temp = document.getElementById('q-' + i + '-' + j);
+                    
+            //         if (temp.style.backgroundColor != "") {
+            //             if (document.getElementById('q-' + (i + 1) + '-' + j).style.backgroundColor != "") {
+            //                 for (let k = 0; k < blocks.length; k++) {
+            //                     if (blocks[k][0] == i + 1 && blocks[k][1] == j) {
+
+            //                         return true;
+            //                     }
+                                
+            //                 }
+            //             }
+            //         }
+                    
+            //     }
+                
+            // }
+
+
             // from moveDown()
             if (direction == "down") {
                 
-                if (piece.type.length == 4) {
-                        if (piece.orient == 0 && piece.xCoord == boardHeight - piece.type.length + 2) {
-                            //piece.xCoord -= 1;
-                            return false;
-                        }
-                        if (piece.orient == 2 && piece.xCoord == boardHeight - piece.type.length + 1) {
-                            //piece.xCoord -= 1;
-                            return false;
-                        }
-                        if ((piece.orient == 1 && piece.xCoord == boardHeight - piece.type.length) ||
-                            (piece.orient == 3 && piece.xCoord == boardHeight - piece.type.length)) {
-                            //piece.xCoord -= 1;
-                            return false;
-                        }
-                    }
-                    else if (piece.type.length == 2) {
-                        if (piece.xCoord == boardHeight - piece.type.length) {
-                            // piece.erase();
-                            // piece.xCoord -= 1;
-                            // piece.draw();
-                            return false;
-                        }
-                    }
-                    else {
-                        if (piece.orient == 0 && piece.xCoord == boardHeight - piece.type.length + 1) {
-                            // piece.xCoord -= 1;
-                            return false;
-                        }
-                        if (piece.orient != 0 && piece.xCoord == boardHeight - piece.type.length) {
-                            console.log("landed!");
-                            // piece.xCoord -= 1;
-                            // fix active piece to board matrix here and create new active piece
-                            //fixTetrominoToBoard(this.type, this.xCoord, this.yCoord);
-                            // create new tetromino
-                            createNew();
-                        }
-                    }
-                    return true;
+
             }
 
             // from moveLeft()
             if (direction == "left") {
                 
-                if (piece.type.length == 4) {
-                    if ((piece.orient == 1) && piece.yCoord == -2) {
-                        // piece.yCoord += 1;
-                        return false;
-                    }
-                    if ((piece.orient == 3) && piece.yCoord == -1) {
-                        // piece.yCoord += 1;
-                        return false;
-                    }
-                    if (piece.orient % 2 == 0 && piece.yCoord == 0) {
-                        // piece.yCoord += 1;
-                        return false;
-                    }
-                }
-                else {
-                    if (piece.orient == 1 && piece.yCoord == -1) {
-                        // piece.yCoord += 1;
-                        return false;
-                    }
-                    if (piece.orient != 1 && piece.yCoord == 0) {
-                        // piece.yCoord += 1;
-                        return false;
-                    }
-                    return true;
-                }
-                return true;
+
             }
 
             // from moveRight()
             if (direction == "right") {
-                if (piece.type.length == 4) {
-                    if ((piece.orient == 1) && piece.yCoord == boardWidth - piece.type.length + 1) {
-                        // piece.yCoord -= 1;
-                        return false;
-                    }
-                    if ((piece.orient == 3) && piece.yCoord == boardWidth - piece.type.length + 2) {
-                        // piece.yCoord -= 1;
-                        return false;
-                    }
-                    if (piece.orient % 2 == 0 && piece.yCoord == boardWidth - piece.type.length) {
-                        // piece.yCoord -= 1;
-                        return false;
-                    }
-                }
-                else {
-                    if (piece.orient == 3 && (piece.yCoord == boardWidth - piece.type.length + 1)) {
-                        // piece.yCoord -= 1;
-                        return false;
-                    }
-                    if ((piece.orient != 3) && piece.yCoord == boardWidth - piece.type.length) {
-                        // piece.yCoord -= 1;
-                        return false;
-                    }
-                    return true;
-                }
-                return true;
+
             }
 
             // from rotate()
-            if (piece.type.length == 4) {
-                    if ((piece.orient == 0 || piece.orient == 2) && (piece.xCoord == boardHeight - piece.type.length + 1)) {
-                        // piece.erase();
-                        // piece.xCoord -= 1;
-                        // piece.draw();
-                        return false;
-                    }
-                    else if ((piece.orient == 0 || piece.orient == 2) && (piece.xCoord == boardHeight - piece.type.length + 2)) {
-                        // piece.erase();
-                        // piece.xCoord -= 2;
-                        // piece.draw();
-                        return false;
-                    }
-                    else if ((piece.orient == 1 && piece.yCoord == boardWidth - piece.type.length + 1) ||
-                        (piece.orient == 3 && piece.yCoord == boardWidth - piece.type.length + 1)) {
-                        // piece.moveLeft();
-                        return false;
-                    }
-                    else if (piece.orient == 3 && piece.yCoord == boardWidth - piece.type.length + 2) {
-                        // piece.moveLeft();
-                        // piece.moveLeft();
-                        return false;
-                    }
-                    else if (piece.orient == 1 && piece.yCoord == -2) {
-                        // piece.moveRight();
-                        // piece.moveRight();
-                        return false;
-                    }
-                    else if ((piece.orient == 1 && piece.yCoord == -1) ||
-                            (piece.orient == 3 && piece.yCoord == -1)) {
-                        // piece.moveRight();
-                        return false;
-                    }
-                }
-                else {
-                    if (piece.orient == 3) {
-                        // piece.moveLeft();
-                        return false;
-                    }
-                    else if (piece.orient == 0 && piece.xCoord == boardHeight - piece.type.length + 1) {
-                        // piece.erase();
-                        // piece.xCoord -= 1;
-                        return false;
-                    }
-                    else if (piece.orient == 1) {
-                        // piece.moveRight();
-                        return false;
-                    }
-                    return true;
-                }
-                return true;
+
         }
 
         function fixTetrominoToBoard(type, x, y) {
@@ -556,26 +481,31 @@
             if (e.keyCode == 87) {
                 // user pressed 'w' for up
                 direction = "rot";
-                checkCollision(activeTet, direction);
-                activeTet.rotate();
+                if (!(checkCollision(activeTet, direction))) {
+
+                    activeTet.rotate();
+                }
             }
             if (e.keyCode == 68) {
                 // user pressed 'd' for right
                 direction = "right";
-                checkCollision(activeTet, direction);
-                activeTet.moveRight();
+                if (!(checkCollision(activeTet, direction))) {
+                    activeTet.moveRight();
+                }
             }
             if (e.keyCode == 83) {
                 // user pressed "s" for down
                 direction = "down";
-                checkCollision(activeTet, direction);
-                activeTet.moveDown();
+                if (!(checkCollision(activeTet, direction))) {
+                    activeTet.moveDown();
+                }
             }
             if (e.keyCode == 65) {
                 // user pressed 'a' for left
                 direction = "left";
-                checkCollision(activeTet, direction);
-                activeTet.moveLeft();
+                if (!(checkCollision(activeTet, direction))) {
+                    activeTet.moveLeft();
+                }
             }
             console.log(boardMatrix);
             console.log(activeTet.xCoord + ", " + activeTet.yCoord);
