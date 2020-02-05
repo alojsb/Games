@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+s<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -342,7 +342,7 @@
                         this.orient = 0;
                     }
                 }               
-                console.log("orientation: " + this.orient);
+                //console.log("orientation: " + this.orient);
             }
 
             // collisionDetection() {
@@ -355,34 +355,92 @@
 
         function checkCollision(piece, direction) {
 
-            // if (blocks[0] == blocks[1]) {
-            //     console.log("Fuck they are equal!!!!! :(");
-            // }
+            blockIndex = 0;
+            blocks = [[0,0],[0,0],[0,0],[0,0]];
+            for (let i = 0; i < piece.type.length; i++) {
 
-            for (let i = piece.type.length - 1; i >= 0; i--) {
-                for (let j = piece.type.length - 1; j >= 0; j--) {
+                for (let j = 0; j < piece.type.length; j++) {
                     
-                    console.log("attempting block " + (i + piece.xCoord) + ", " + (j + piece.yCoord));
                     let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
-                    if (temp.style.backgroundColor != "") {
-                        if (document.getElementById('q-' + (i + piece.xCoord + 1) + '-' + (j + piece.yCoord)).style.backgroundColor != "") {
-                            for (let k = 0; k < blocks.length; k++) {
-                                    console.log("about to compare [" + blocks[k][0] + ", " + blocks[k][1] + "]");
-                                    console.log("to [" + (i + piece.xCoord + 1) + ", " + (j + piece.yCoord) + "]");
-                                if ((blocks[k][0] == (i + piece.xCoord + 1)) && (blocks[k][1] == (j + piece.yCoord))) {
-                                    // console.log("compared " + blocks[k][0] + " and " + (i + piece.xCoord + 1));
-                                    // console.log("compared " + blocks[k][1] + " and " + (j + piece.yCoord + 1));
-                                    continue;
-                                }
-                            }
-                            console.log("collision detected!!!");
-                            return true;
+
+                    if (temp != null) {
+                        
+                        if (temp.style.backgroundColor != "") {
+                            console.log(blocks);
+                            blocks[blockIndex][0] = i + piece.xCoord;
+                            blocks[blockIndex][1] = j + piece.yCoord;
+                            blockIndex++;
                         }
                     }
-                    
                 }
-                
             }
+
+            // if (blocks[0] == blocks[1]) {
+            //     console.log("F*** they are equal!!!!! :(");
+            // }
+
+            // for (let i = piece.type.length - 1; i >= 0; i--) {
+            //     for (let j = piece.type.length - 1; j >= 0; j--) {
+                    
+            //         console.log("attempting block " + (i + piece.xCoord) + ", " + (j + piece.yCoord));
+            //         let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
+            //         if (temp.style.backgroundColor != "") {
+            //             if (document.getElementById('q-' + (i + piece.xCoord + 1) + '-' + (j + piece.yCoord)).style.backgroundColor != "") {
+            //                 for (let k = 0; k < blocks.length; k++) {
+            //                         console.log("about to compare [" + blocks[k][0] + ", " + blocks[k][1] + "]");
+            //                         console.log("to [" + (i + piece.xCoord + 1) + ", " + (j + piece.yCoord) + "]");
+            //                     if ((blocks[k][0] == (i + piece.xCoord + 1)) && (blocks[k][1] == (j + piece.yCoord))) {
+            //                         // console.log("compared " + blocks[k][0] + " and " + (i + piece.xCoord + 1));
+            //                         // console.log("compared " + blocks[k][1] + " and " + (j + piece.yCoord + 1));
+            //                         console.log("continued...")
+            //                         continue;
+            //                     }
+            //                 }
+            //                 console.log("collision detected!!!");
+            //                 return true;
+            //             }
+            //         }
+                    
+            //     }
+                
+            // }
+
+            if (direction == "down") {
+                for (let i = 0; i < piece.type.length; i++) {
+                    for (let j = 0; j < piece.type.length; j++) {
+                        
+                        let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
+                        let temp2 = document.getElementById('q-' + (i + 1 + piece.xCoord) + '-' + (j + piece.yCoord));
+                        //console.log("next block is " + temp2);
+                        if (temp.style.backgroundColor != "" && temp2 == null) {
+                            console.log("collision!!!");
+                            //createNew();
+                            return true;
+                        }
+
+                        if (temp.style.backgroundColor != "" && temp2.style.backgroundColor != "") {
+                            for (let k = 0; k < blocks.length; k++) {
+                                if (blocks[k][0] == temp2.xCoord && blocks[k][1] == temp2.yCoord) {
+                                    //console.log("continue!!!");
+                                    //continue;
+                                    return false;
+                                }
+                                //console.log("collision 2!!!");
+                                //return true;
+                                //createNew();
+                            }
+                        }
+                        // if (
+                        //         (temp.style.backgroundColor != "" && temp2.style.backgroundColor != "") &&
+                        //         (temp2.xCoord)
+                        // ) {
+                        //     console.log(temp.style.backgroundColor);
+                        //     //return true;
+                        // }
+                    }
+                }
+            }
+
 
             console.log("NO collision");
             return false;
@@ -430,51 +488,51 @@
 
         }
 
-        function fixTetrominoToBoard(type, x, y) {
-            console.log("Xcoord: " + x + ", Ycoord: " + y);
+        // function fixTetrominoToBoard(type, x, y) {
+        //     console.log("Xcoord: " + x + ", Ycoord: " + y);
 
-            let k = 0, l = 0;
-            //let m = 0, n = 0;
-            //let o = 0; p = 0;
-            for (let i = 0; i < boardHeight; i++) {
-                console.log("fix-outerForLoop");
-                for (let j = 0; j < boardWidth; j++) {
-                    console.log("fix-innerForLoop");
-
-
+        //     let k = 0, l = 0;
+        //     //let m = 0, n = 0;
+        //     //let o = 0; p = 0;
+        //     for (let i = 0; i < boardHeight; i++) {
+        //         console.log("fix-outerForLoop");
+        //         for (let j = 0; j < boardWidth; j++) {
+        //             console.log("fix-innerForLoop");
 
 
 
 
 
-                // if (i >= x && j >= y) {
-                //     boardMatrix[i][j] = type[k][l];
-                //     k++;
-                // }
-                // if (k == type.length) {
-                //     k = 0;
-                // }
+
+
+        //         // if (i >= x && j >= y) {
+        //         //     boardMatrix[i][j] = type[k][l];
+        //         //     k++;
+        //         // }
+        //         // if (k == type.length) {
+        //         //     k = 0;
+        //         // }
 
 
                     
-                //     if (i >= x && j >= y) {
-                //         console.log("fix-ifStatement");
-                //         if (type[k][l] != 0) {
-                //             boardMatrix[i][j] = 1;
-                //             console.log("(k: " + k + ", l: " + l + ")");
-                //         }
-                //         k++;
-                //         if (k == type.length) {
-                //             k = 0;
-                //         }
-                //     }
-                }
-                // l++;
-                // if (l == type.length) {
-                //     l = 0;
-                // }
-            }
-        }
+        //         //     if (i >= x && j >= y) {
+        //         //         console.log("fix-ifStatement");
+        //         //         if (type[k][l] != 0) {
+        //         //             boardMatrix[i][j] = 1;
+        //         //             console.log("(k: " + k + ", l: " + l + ")");
+        //         //         }
+        //         //         k++;
+        //         //         if (k == type.length) {
+        //         //             k = 0;
+        //         //         }
+        //         //     }
+        //         }
+        //         // l++;
+        //         // if (l == type.length) {
+        //         //     l = 0;
+        //         // }
+        //     }
+        // }
 
         document.addEventListener('keydown', function (e) {
             //console.log(e.keyCode);
@@ -498,6 +556,9 @@
                 direction = "down";
                 if (!(checkCollision(activeTet, direction))) {
                     activeTet.moveDown();
+                }
+                if (checkCollision(activeTet, direction)) {
+                    createNew();
                 }
             }
             if (e.keyCode == 65) {
