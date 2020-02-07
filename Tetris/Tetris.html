@@ -235,7 +235,7 @@ s<!DOCTYPE html>
 
                     if (temp != undefined) {
                         
-                        if (temp.style.backgroundColor != "") {
+                        if (temp.style.backgroundColor != "" && piece.type[i][j] == 1) {
                             blocks[blockIndex][0] = i + piece.xCoord;
                             blocks[blockIndex][1] = j + piece.yCoord;
                             blockIndex++;
@@ -252,27 +252,82 @@ s<!DOCTYPE html>
                 for (let i = piece.type.length - 1; i >= 0; i--) {
                     for (let j = piece.type.length - 1; j >= 0; j--) {
                         
-                        // non-existant elements should not be called
-                        if (i + piece.xCoord > 0 && i) {
+                        // non-existent elements should not be called
+                        if (
+                            i + piece.xCoord > 0 &&
+                            i + piece.xCoord < boardHeight &&
+                            j + piece.yCoord > 0 &&
+                            j + piece.yCoord < boardWidth
+                        ) {
                             
-                        }
-                        let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
-                        let temp2 = document.getElementById('q-' + (i + 1 + piece.xCoord) + '-' + (j + piece.yCoord));
+                            let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
+                            let temp2 = document.getElementById('q-' + (i + 1 + piece.xCoord) + '-' + (j + piece.yCoord));
 
-                        if (temp.style.backgroundColor != "" && temp2 == null) {
-                            console.log("collision!!!");
+                            if (
+                                temp.style.backgroundColor != "" && 
+                                (
+                                    (i + piece.xCoord == blocks[0][0] && j + piece.yCoord == blocks[0][1]) ||
+                                    (i + piece.xCoord == blocks[1][0] && j + piece.yCoord == blocks[1][1]) ||
+                                    (i + piece.xCoord == blocks[2][0] && j + piece.yCoord == blocks[2][1]) ||
+                                    (i + piece.xCoord == blocks[3][0] && j + piece.yCoord == blocks[3][1])
+                                )
+                            ) {
+                                if (temp2 == null) {
+                                    console.log("collision!!!");
 
-                            return true;
-                        }
-
-                        console.log("coords: " + piece.xCoord + ", " + piece.yCoord);
-                        if (temp.style.backgroundColor != "" && temp2.style.backgroundColor != "") {
-                            for (let k = 0; k < blocks.length; k++) {
-                                console.log("about to check:" + (i + 1 + piece.xCoord) + ", " + (j + piece.yCoord));
-                                if (blocks[k][0] == i + 1 + piece.xCoord && blocks[k][1] == j + piece.yCoord) {
-
+                                    return true;
+                                }
+                                else if (
+                                    (
+                                        temp2.style.backgroundColor != "" && 
+                                        (
+                                            (i + 1 + piece.xCoord != blocks[0][0] && j + piece.yCoord != blocks[0][1]) ||
+                                            (i + 1 + piece.xCoord != blocks[1][0] && j + piece.yCoord != blocks[1][1]) ||
+                                            (i + 1 + piece.xCoord != blocks[2][0] && j + piece.yCoord != blocks[2][1]) ||
+                                            (i + 1 + piece.xCoord != blocks[3][0] && j + piece.yCoord != blocks[3][1])
+                                        )
+                                    )
+                                ) {
+                                    return true;
                                 }
                             }
+
+                            // if (temp.style.backgroundColor != "" && temp2 == null) {
+                            //     console.log("collision!!!");
+
+                            //     return true;
+                            // }
+                            // else if (
+                            //     temp.style.backgroundColor != "" &&
+                            //     (
+                            //         (i + piece.xCoord == blocks[0][0] && j + piece.yCoord == blocks[0][1]) ||
+                            //         (i + piece.xCoord == blocks[1][0] && j + piece.yCoord == blocks[1][1]) ||
+                            //         (i + piece.xCoord == blocks[2][0] && j + piece.yCoord == blocks[2][1]) ||
+                            //         (i + piece.xCoord == blocks[3][0] && j + piece.yCoord == blocks[3][1])
+                            //     ) &&
+                            //     (
+                            //         temp2.style.backgroundColor != "" &&
+                            //         (
+                            //             (i + 1 + piece.xCoord == blocks[0][0] && j + piece.yCoord == blocks[0][1]) ||
+                            //             (i + 1 + piece.xCoord == blocks[1][0] && j + piece.yCoord == blocks[1][1]) ||
+                            //             (i + 1 + piece.xCoord == blocks[2][0] && j + piece.yCoord == blocks[2][1]) ||
+                            //             (i + 1 + piece.xCoord == blocks[3][0] && j + piece.yCoord == blocks[3][1])
+                            //         )
+                            //     )
+                            // ) {
+                            //     return true;
+                            // }
+
+                            // console.log("coords: " + piece.xCoord + ", " + piece.yCoord);
+                            // if (temp.style.backgroundColor != "" && temp2.style.backgroundColor != "") {
+                            //     for (let k = 0; k < blocks.length; k++) {
+                            //         console.log("about to check:" + (i + 1 + piece.xCoord) + ", " + (j + piece.yCoord));
+                            //         if (blocks[k][0] == i + 1 + piece.xCoord && blocks[k][1] == j + piece.yCoord) {
+                            //             console.log("no coll, it's another tetro-block");
+                            //             return false;
+                            //         }
+                            //     }
+                            // }
                         }
                     }
                 }
@@ -346,7 +401,7 @@ s<!DOCTYPE html>
 
         function createNew() {            
             let selectedPiece = 4;
-            activeTet = new Tetromino(tetrominoType[selectedPiece], tetrominoColor[selectedPiece], 0, 0, 0);
+            activeTet = new Tetromino(tetrominoType[selectedPiece], tetrominoColor[selectedPiece], 0, 2, 0);
             activeTet.draw();
         }
 
