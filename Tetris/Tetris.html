@@ -226,7 +226,7 @@ s<!DOCTYPE html>
         function checkCollision(piece, direction) {
 
             blockIndex = 0;
-            blocks = [[0,0],[0,0],[0,0],[0,0]];
+            blocks = [[],[],[],[]];
             for (let i = 0; i < piece.type.length; i++) {
 
                 if (blockIndex > 3) {
@@ -248,17 +248,19 @@ s<!DOCTYPE html>
                 }
             }
 
+
+
             console.log(blocks);
 
             for (let i = 0; i < piece.type.length; i++) {
                 for (let j = 0; j < piece.type.length; j++) {
 
-                    let beyondEdgeBoole = withinBoard(i + piece.xCoord, j + piece.yCoord, direction);
+                    let withinBoardBoole = withinBoard(i + piece.xCoord, j + piece.yCoord, direction);
 
                     // downward movement
                     if (direction == "down") {
 
-                        if(beyondEdgeBoole) {
+                        if(withinBoardBoole) {
 
                             let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
                             let temp2 = document.getElementById('q-' + (i + 1 + piece.xCoord) + '-' + (j + piece.yCoord));
@@ -270,8 +272,8 @@ s<!DOCTYPE html>
                                     return true;
                                 }
                                 else if (
-                                            temp2.style.backgroundColor != "" &&
-                                            !(isPartOfActiveTet(i + 1 + piece.xCoord, j + piece.yCoord, blocks))
+                                        temp2.style.backgroundColor != "" &&
+                                        !(isPartOfActiveTet(i + 1 + piece.xCoord, j + piece.yCoord, blocks))
                                 ) {
                                     return true;
                                 }
@@ -282,7 +284,7 @@ s<!DOCTYPE html>
                     // leftward movement
                     if (direction == "left") {
                         
-                        if (beyondEdgeBoole) {
+                        if (withinBoardBoole) {
                             
                             let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
                             let temp2 = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j - 1 + piece.yCoord));
@@ -306,7 +308,7 @@ s<!DOCTYPE html>
                     // rightward movement
                     if (direction == "right") {
                         
-                        if (beyondEdgeBoole) {
+                        if (withinBoardBoole) {
                             
                             let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
                             let temp2 = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + 1 + piece.yCoord));
@@ -326,176 +328,116 @@ s<!DOCTYPE html>
                             }
                         }
                     }
+
+                    // rotation movement
+                    if (direction == "rot") {
+
+                        if (withinBoardBoole) {
+                            
+                            let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
+
+                            if (isPartOfActiveTet(i + piece.xCoord, j + piece.yCoord, blocks)) {
+                                
+                                let a = i, b = j;
+
+                                if (piece.type.length != 4) {
+                                    
+                                    if (i == 0 && j == 0) {
+                                        b += 2;
+                                    }
+                                    else if (i == 0 && j == 1) {
+                                        a++; b++;
+                                    }
+                                    else if (i == 0 && j == 2) {
+                                        a += 2;
+                                    }
+                                    else if ((i == 1 && j == 2) ||(i == 1 && j == 0)) {
+                                        b = i; a = j;
+                                    }
+                                    else if (i == 2 && j == 2) {
+                                        b -= 2;
+                                    }
+                                    else if (i == 2 && j == 1) {
+                                        a -= 1; b-= 1;
+                                    }
+                                    else if (i == 2 && j == 0) {
+                                        a -= 2;
+                                    }
+                                    else {
+                                        // block in the middle - does not move during rotation
+                                    }
+                                }
+                                else {
+
+                                    if (i == 0 && j == 0) {
+                                        b += 3;
+                                    }
+                                    else if (i == 0 && j == 1) {
+                                        a += 1; b += 2;
+                                    }
+                                    else if (i == 0 && j == 2) {
+                                        a += 2; b += 1;
+                                    }
+                                    else if (i == 0 && j == 3) {
+                                        a += 3;
+                                    }
+                                    else if (i == 1 && j == 3) {
+                                        a -= 2; b -= 1;
+                                    }
+                                    else if (i == 2 && j == 3) {
+                                        a += 1; b -= 2;
+                                    }
+                                    else if (i == 3 && j == 3) {
+                                        b -= 3;
+                                    }
+                                    else if (i == 3 && j == 2) {
+                                        a -= 1; b -= 2;
+                                    }
+                                    else if (i == 3 && j == 1) {
+                                        a -= 2; b -= 1;
+                                    }
+                                    else if (i == 3 && j == 0) {
+                                        a -= 3;
+                                    }
+                                    else if (i == 2 && j == 0) {
+                                        a -= 2; b += 1;
+                                    }
+                                    else if (i == 1 && j == 0) {
+                                        a -= 1; b += 2;
+                                    }
+                                    else if (i == 1 && j == 1) {
+                                        b += 1;
+                                    }
+                                    else if (i == 1 && j == 2) {
+                                        a += 1;
+                                    }
+                                    else if (i == 2 && j == 2) {
+                                        b  -= 1;
+                                    }
+                                    else {
+                                        // i == 2 && j == 1
+                                        a -= 1;
+                                    }
+                                }
+
+
+                                let temp2 = document.getElementById('q-' + (a + piece.xCoord) + '-' + (b + piece.yCoord));
+
+                                if (temp2 == null) {
+                                    return true;
+                                }
+                                if (
+                                    temp2.style.backgroundColor != "" &&
+                                    !(isPartOfActiveTet(a + piece.xCoord, b + piece.yCoord, blocks))
+                                    ) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
-            // // from moveDown()
-            // if (direction == "down") {
-            //     for (let i = 0; i < piece.type.length; i++) {
-            //         for (let j = 0; j < piece.type.length; j++) {
-            //     //for (let i = piece.type.length - 1; i >= 0; i--) {
-            //         //for (let j = piece.type.length - 1; j >= 0; j--) {
-                        
-            //             // non-existent elements should not be called
-            //             if (
-            //                 i + piece.xCoord >= 0 &&
-            //                 i + piece.xCoord < boardHeight &&
-            //                 j + piece.yCoord >= 0 &&
-            //                 j + piece.yCoord < boardWidth
-            //             ) {
-                            
-            //                 let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
-            //                 let temp2 = document.getElementById('q-' + (i + 1 + piece.xCoord) + '-' + (j + piece.yCoord));
-            //                 console.log("down, " + isPartOfActiveTet(i + piece.xCoord, j + piece.yCoord, blocks));
-
-            //                 if (
-            //                     temp.style.backgroundColor != "" && 
-            //                     (
-            //                         isPartOfActiveTet(i + piece.xCoord, j + piece.yCoord, blocks)
-            //                         // (i + piece.xCoord == blocks[0][0] && j + piece.yCoord == blocks[0][1]) ||
-            //                         // (i + piece.xCoord == blocks[1][0] && j + piece.yCoord == blocks[1][1]) ||
-            //                         // (i + piece.xCoord == blocks[2][0] && j + piece.yCoord == blocks[2][1]) ||
-            //                         // (i + piece.xCoord == blocks[3][0] && j + piece.yCoord == blocks[3][1])
-            //                     )
-            //                 ) {
-            //                     if (temp2 == null) {
-            //                         console.log("collision!!!");
-
-            //                         return true;
-            //                     }
-            //                     else if (
-            //                             temp2.style.backgroundColor != "" && 
-            //                             (
-            //                                 !(isPartOfActiveTet(i + 1 + piece.xCoord, j + piece.yCoord, blocks))
-            //                                 // (i + 1 + piece.xCoord != blocks[0][0] && j + piece.yCoord != blocks[0][1]) ||
-            //                                 // (i + 1 + piece.xCoord != blocks[1][0] && j + piece.yCoord != blocks[1][1]) ||
-            //                                 // (i + 1 + piece.xCoord != blocks[2][0] && j + piece.yCoord != blocks[2][1]) ||
-            //                                 // (i + 1 + piece.xCoord != blocks[3][0] && j + piece.yCoord != blocks[3][1])
-            //                             )
-            //                     ) {
-            //                         return true;
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
-
-            // // from moveLeft()
-            // if (
-            //     direction == "left" &&
-            //     blocks[0][1] >= 0 &&
-            //     blocks[1][1] >= 0 &&
-            //     blocks[2][1] >= 0 &&
-            //     blocks[3][1] >= 0
-            // ) {
-
-            //         for (let i = 0; i < piece.type.length; i++) {
-            //             for (let j = 0; j < piece.type.length; j++) {
-            //         //for (let i = piece.type.length - 1; i >= 0; i--) {
-            //             //for (let j = piece.type.length - 1; j >= 0; j--) {
-
-            //                 // non-existent elements should not be called
-            //                 if (
-            //                     i + piece.xCoord >= 0 &&
-            //                     i + piece.xCoord < boardHeight &&
-            //                     j + piece.yCoord >= 0 &&
-            //                     j + piece.yCoord < boardWidth
-            //                 ) {
-            //                     let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
-            //                     let temp2 = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j - 1 + piece.yCoord));
-            //                     console.log("left, " + isPartOfActiveTet(i + piece.xCoord, j + piece.yCoord, blocks));
-
-            //                     if (
-            //                         temp.style.backgroundColor != "" && 
-            //                         (
-            //                             isPartOfActiveTet(i + piece.xCoord, j + piece.yCoord, blocks)
-            //                             // (i + piece.xCoord == blocks[0][0] && j + piece.yCoord == blocks[0][1]) ||
-            //                             // (i + piece.xCoord == blocks[1][0] && j + piece.yCoord == blocks[1][1]) ||
-            //                             // (i + piece.xCoord == blocks[2][0] && j + piece.yCoord == blocks[2][1]) ||
-            //                             // (i + piece.xCoord == blocks[3][0] && j + piece.yCoord == blocks[3][1])
-            //                         )
-            //                     ) {
-            //                         if (temp2 == null) {
-            //                             console.log("collision!!!");
-
-            //                             return true;
-            //                         }
-            //                         else if (
-            //                                 temp2.style.backgroundColor != "" && 
-            //                                 (
-            //                                     !(isPartOfActiveTet(i + piece.xCoord, j - 1 + piece.yCoord, blocks))
-            //                                     // (i + piece.xCoord != blocks[0][0] && j - 1 + piece.yCoord != blocks[0][1]) ||
-            //                                     // (i + piece.xCoord != blocks[1][0] && j - 1 + piece.yCoord != blocks[1][1]) ||
-            //                                     // (i + piece.xCoord != blocks[2][0] && j - 1 + piece.yCoord != blocks[2][1]) ||
-            //                                     // (i + piece.xCoord != blocks[3][0] && j - 1 + piece.yCoord != blocks[3][1])
-            //                                 )
-            //                         ) {
-            //                             return true;
-            //                         }
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     }
-            
-
-            // // from moveRight()
-            // if (direction == "right") {
-            //     for (let i = 0; i < piece.type.length; i++) {
-            //         for (let j = 0; j < piece.type.length; j++) {
-            //     // for (let i = piece.type.length - 1; i >= 0; i--) {
-            //     //     for (let j = piece.type.length - 1; j >= 0; j--) {
-
-            //             // non-existent elements should not be called
-            //             if (
-            //                 i + piece.xCoord >= 0 &&
-            //                 i + piece.xCoord < boardHeight &&
-            //                 j + piece.yCoord >= 0 &&
-            //                 j + piece.yCoord < boardWidth
-            //             ) {
-            //                 let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
-            //                 let temp2 = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + 1 + piece.yCoord));
-            //                 console.log("right, " + isPartOfActiveTet(i + piece.xCoord, j + piece.yCoord, blocks));
-
-            //                 if (
-            //                     temp.style.backgroundColor != "" && 
-            //                     (
-            //                         isPartOfActiveTet(i + piece.xCoord, j + piece.yCoord, blocks)
-            //                         // (i + piece.xCoord == blocks[0][0] && j + piece.yCoord == blocks[0][1]) ||
-            //                         // (i + piece.xCoord == blocks[1][0] && j + piece.yCoord == blocks[1][1]) ||
-            //                         // (i + piece.xCoord == blocks[2][0] && j + piece.yCoord == blocks[2][1]) ||
-            //                         // (i + piece.xCoord == blocks[3][0] && j + piece.yCoord == blocks[3][1])
-            //                     )
-            //                 ) {
-            //                     if (temp2 == null) {
-            //                         console.log("collision!!!");
-
-            //                         return true;
-            //                     }
-            //                     else if (
-            //                             temp2.style.backgroundColor != "" && 
-            //                             (
-            //                                 !(isPartOfActiveTet(i + piece.xCoord, j + 1 + piece.yCoord, blocks))
-            //                                 // (i + piece.xCoord != blocks[0][0] && j + 1 + piece.yCoord != blocks[0][1]) ||
-            //                                 // (i + piece.xCoord != blocks[1][0] && j + 1 + piece.yCoord != blocks[1][1]) ||
-            //                                 // (i + piece.xCoord != blocks[2][0] && j + 1 + piece.yCoord != blocks[2][1]) ||
-            //                                 // (i + piece.xCoord != blocks[3][0] && j + 1 + piece.yCoord != blocks[3][1])
-            //                             )
-            //                     ) {
-            //                         return true;
-            //                     }
-
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
-
-            // from rotate()
-            if (direction == "rot") {
-
-            }
 
             // default function return
             console.log("NO collision");
@@ -530,7 +472,9 @@ s<!DOCTYPE html>
                 }
                 return true;
             }
+            return true;
         }
+
 
         document.addEventListener('keydown', function (e) {
             //console.log(e.keyCode);
@@ -559,9 +503,6 @@ s<!DOCTYPE html>
                     console.log("can't move downwards - about to create new!!!");
                     createNew();
                 }
-                // if (checkCollision(activeTet, direction)) {
-                //     createNew();
-                // }
             }
             if (e.keyCode == 65) {
                 // user pressed 'a' for left
@@ -570,13 +511,13 @@ s<!DOCTYPE html>
                     activeTet.moveLeft();
                 }
             }
-            //console.log(boardMatrix);
+
             console.log(activeTet.xCoord + ", " + activeTet.yCoord);
         });
 
         function createNew() {            
-            let selectedPiece = 4;
-            activeTet = new Tetromino(tetrominoType[selectedPiece], tetrominoColor[selectedPiece], 0, 2, 0);
+            let selectedPiece = Math.floor(Math.random() * 7);
+            activeTet = new Tetromino(tetrominoType[selectedPiece], tetrominoColor[selectedPiece], 0, 3, 0);
             activeTet.draw();
         }
 
