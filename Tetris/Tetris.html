@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tetris</title>
+
+    <style>
+
+        body{
+            margin: 16px;
+            background-color: black;
+        }
+
+        .main-container{
+            /*placeholder*/
+        }
+    
+        .main-division{
+            border: 1px solid red;
+        }
+
+        #board{
+            display: grid;
+            margin: auto;
+        }
+    
+    </style>
+
+</head>
+<body>
+    <div id="" class="main-container">
+
+        <div id="board" class="main-division"></div>
+
+    </div>
+
+    <script>
+    
+        // variables for catching html elements
+        let board = document.getElementById('board');
+
+        // board grid - number of rows and columns
+        let boardHeight = 20;
+        let boardWidth = 10;
+
+        // set board width and height in pixels
+        let buildingBlockSize = 30;
+        board.style.width = buildingBlockSize * boardWidth + "px";
+        board.style.height = buildingBlockSize * boardHeight + "px";
+
+        // global variables for game mechanics
+        let activeTet;
+        let direction;
+        let blocks = [[],[],[],[]];
+        let blockIndex;
+
+        // set-up the grid inside the board
+        board.style.gridTemplateColumns = "repeat(" + boardWidth + ", 1fr)";
+
+        // creation of board elements for display of tetrominos
+        for (let i = 0; i < boardHeight; i++) {
+            for (let j = 0; j < boardWidth; j++) {
+                let temp = document.createElement("div");
+                temp.setAttribute('id', 'q-' + i + '-' + j);
+                board.appendChild(temp);
+            }
+        }
+
+        // define tetromino colors
+        let tetrominoColor = [
+
+            "red",
+            "blue",
+            "yellow",
+            "orange",
+            "green",
+            "purple",
+            "white"
+        ];
+
+        // define tetromino shape
+        let tetrominoShape = [
+
+            [
+                [0, 1, 1],
+                [1, 1, 0],
+                [0, 0, 0]
+            ],
+            [
+                [1, 1, 0],
+                [0, 1, 1],
+                [0, 0, 0]
+            ],
+            [
+                [0, 1, 0],
+                [1, 1, 1],
+                [0, 0, 0]
+            ],
+            [
+                [1, 0, 0],
+                [1, 1, 1],
+                [0, 0, 0]
+            ],
+            [
+                [0, 0, 1],
+                [1, 1, 1],
+                [0, 0, 0]
+            ],
+            [
+                [1, 1],
+                [1, 1],
+            ],
+            [
+                [0, 0, 0, 0],
+                [1, 1, 1, 1],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]
+            ],
+        ]
+
+        // define class Tetromino
+        class Tetromino {
+            constructor(shape, color, xCoord, yCoord, orient) {
+                this.shape = shape;
+                this.color = color;
+                this.xCoord = xCoord;
+                this.yCoord = yCoord;
+                this.orient = orient;
+            }
+
+            // draw a given tetromino piece inside the board in the given coordinates
+            draw() {
+                
+                blockIndex = 0;
+                let temp = this.shape;
+
+                for (let i = 0; i < temp.length; i++) {
+                    for (let j = 0; j < temp.length; j++) {
+                        if (temp[i][j] == 1) {
+                            document.getElementById('q-' + (i + this.xCoord) + '-' + (j + this.yCoord)).style.backgroundColor = this.color;
+                            blocks[blockIndex] = [i + this.xCoord, j + this.yCoord];
+                            blockIndex++;
+                        }
+                    }
+                }
+            }
+
+            // erase tetromino in given coordinates (when tetromino changes place)
+            erase() {
+
+                    let temp = this.shape;
+                    for (let i = 0; i < temp.length; i++) {
+                        for (let j = 0; j < temp.length; j++) {
+                            if (temp[i][j] == 1) {
+                                document.getElementById('q-' + (i + this.xCoord) + '-' + (j + this.yCoord)).style.backgroundColor = "";
+                            }
+                        }
+                    }
+                    blocks = [[],[],[],[]];
+            }
+
+            moveDown() {
+
+                this.erase();
+                this.xCoord += 1;
+                this.draw();
+            }
+
+            moveLeft() {
+
+                this.erase();
+                this.yCoord -= 1;
+                this.draw();
+            }
+
+            moveRight() {
+
+                this.erase();
+                this.yCoord += 1;
+                this.draw();
+
+
+            }
+
+            rotate() {
+
+                // skips whole process of matrix rotation for 2x2 tetromino
+                if (this.shape.length != 2) {
+
+                    // creates copy of tetromino shape (matrix)
+                    let temp = this.shape;
+                    let temp2 = [];
+
+                    // clockwise rotation of given matrix
+                    for (let i = 0; i < this.shape.length; i++) {
+                        temp2[i] = [];
+                        for (let j = 0; j < this.shape.length; j++) {
+                            temp2[i][j] = temp[this.shape.length - 1 - j][i];    
+                        }    
+                    }
+
+                    this.erase();
+                    this.shape = temp2;
+                    this.draw();
+
+                    // keeps track of orientation of tetromino (possible states are from 0 to 3)
+                    this.orient++;
+                    if (this.orient == 4) {
+                        this.orient = 0;
+                    }
+                }
+            }
+        }
+
+        function checkCollision(piece, direction) {
+
+            // store coordinates of the 4 squares of active tetromino in an array
+            blockIndex = 0;
+            blocks = [[],[],[],[]];
+
+            // itetrate through all squares in tetromino matrix in given coords
+            for (let i = 0; i < piece.shape.length; i++) {
+                // if coords for 4 squares are stored, job is done, leave for-loop
+                if (blockIndex > 3) {
+                        break;
+                    }
+
+                for (let j = 0; j < piece.shape.length; j++) {
+                    
+                    let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
+                    // tetromino near edge can cause calling non-existing squares (DOM elements)
+                    if (temp != null) {
+
+                        if (temp.style.backgroundColor != "" && piece.shape[i][j] == 1) {
+                            blocks[blockIndex][0] = i + piece.xCoord;
+                            blocks[blockIndex][1] = j + piece.yCoord;
+                            blockIndex++;
+                        }
+                    }
+                }
+            }
+
+            // here starts the actual collision detection
+
+            // iterate through all the squares of a tetromino shape matrix
+            for (let i = 0; i < piece.shape.length; i++) {
+                for (let j = 0; j < piece.shape.length; j++) {
+
+                    let withinBoardBoole = withinBoard(i + piece.xCoord, j + piece.yCoord, direction);
+
+                    // downward movement
+                    if (direction == "down") {
+
+                        if(withinBoardBoole) {
+
+                            let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
+                            let temp2 = document.getElementById('q-' + (i + 1 + piece.xCoord) + '-' + (j + piece.yCoord));
+
+                            if (isPartOfActiveTet(i + piece.xCoord, j + piece.yCoord, blocks)) {
+
+                                if (temp2 == null) {
+
+                                    return true;
+                                }
+                                else if (
+                                        temp2.style.backgroundColor != "" &&
+                                        !(isPartOfActiveTet(i + 1 + piece.xCoord, j + piece.yCoord, blocks))
+                                ) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+
+                    // leftward movement
+                    if (direction == "left") {
+                        
+                        if (withinBoardBoole) {
+                            
+                            let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
+                            let temp2 = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j - 1 + piece.yCoord));
+
+                            if (isPartOfActiveTet(i + piece.xCoord, j + piece.yCoord, blocks)) {
+                                
+                                if (temp2 == null) {
+                                    
+                                    return true;
+                                }
+                                else if (
+                                    temp2.style.backgroundColor != "" &&
+                                    !(isPartOfActiveTet(i + piece.xCoord, j - 1 + piece.yCoord, blocks))
+                                ) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+
+                    // rightward movement
+                    if (direction == "right") {
+                        
+                        if (withinBoardBoole) {
+                            
+                            let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
+                            let temp2 = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + 1 + piece.yCoord));
+
+                            if (isPartOfActiveTet(i + piece.xCoord, j + piece.yCoord, blocks)) {
+                                
+                                if (temp2 == null) {
+
+                                    return true;
+                                }
+                                else if (
+                                    temp2.style.backgroundColor != "" &&
+                                    !(isPartOfActiveTet(i + piece.xCoord, j + 1 + piece.yCoord, blocks))
+                                ) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+
+                    // rotation movement
+                    if (direction == "rot") {
+
+                        if (withinBoardBoole) {
+                            
+                            let temp = document.getElementById('q-' + (i + piece.xCoord) + '-' + (j + piece.yCoord));
+
+                            if (isPartOfActiveTet(i + piece.xCoord, j + piece.yCoord, blocks)) {
+                                
+                                let a = i, b = j;
+
+                                if (piece.shape.length != 4) {
+                                    
+                                    if (i == 0 && j == 0) {
+                                        b += 2;
+                                    }
+                                    else if (i == 0 && j == 1) {
+                                        a++; b++;
+                                    }
+                                    else if (i == 0 && j == 2) {
+                                        a += 2;
+                                    }
+                                    else if ((i == 1 && j == 2) ||(i == 1 && j == 0)) {
+                                        b = i; a = j;
+                                    }
+                                    else if (i == 2 && j == 2) {
+                                        b -= 2;
+                                    }
+                                    else if (i == 2 && j == 1) {
+                                        a -= 1; b-= 1;
+                                    }
+                                    else if (i == 2 && j == 0) {
+                                        a -= 2;
+                                    }
+                                    else {
+                                        // block in the middle - does not move during rotation
+                                    }
+                                }
+                                // it's for the only one 4x4 tetromino matrix
+                                else {
+
+                                    if (i == 0 && j == 0) {
+                                        b += 3;
+                                    }
+                                    else if (i == 0 && j == 1) {
+                                        a += 1; b += 2;
+                                    }
+                                    else if (i == 0 && j == 2) {
+                                        a += 2; b += 1;
+                                    }
+                                    else if (i == 0 && j == 3) {
+                                        a += 3;
+                                    }
+                                    else if (i == 1 && j == 3) {
+                                        a -= 2; b -= 1;
+                                    }
+                                    else if (i == 2 && j == 3) {
+                                        a += 1; b -= 2;
+                                    }
+                                    else if (i == 3 && j == 3) {
+                                        b -= 3;
+                                    }
+                                    else if (i == 3 && j == 2) {
+                                        a -= 1; b -= 2;
+                                    }
+                                    else if (i == 3 && j == 1) {
+                                        a -= 2; b -= 1;
+                                    }
+                                    else if (i == 3 && j == 0) {
+                                        a -= 3;
+                                    }
+                                    else if (i == 2 && j == 0) {
+                                        a -= 2; b += 1;
+                                    }
+                                    else if (i == 1 && j == 0) {
+                                        a -= 1; b += 2;
+                                    }
+                                    else if (i == 1 && j == 1) {
+                                        b += 1;
+                                    }
+                                    else if (i == 1 && j == 2) {
+                                        a += 1;
+                                    }
+                                    else if (i == 2 && j == 2) {
+                                        b  -= 1;
+                                    }
+                                    else {
+                                        // i == 2 && j == 1
+                                        a -= 1;
+                                    }
+                                }
+
+
+                                let temp2 = document.getElementById('q-' + (a + piece.xCoord) + '-' + (b + piece.yCoord));
+
+                                if (temp2 == null) {
+                                    return true;
+                                }
+                                if (
+                                    temp2.style.backgroundColor != "" &&
+                                    !(isPartOfActiveTet(a + piece.xCoord, b + piece.yCoord, blocks))
+                                    ) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // default function return
+            return false;
+        }
+
+        // checks if square in a tetromino matrix is part of actual tetromino piece
+        function isPartOfActiveTet(coordX, coordY, blk) {
+            for (let i = 0; i < blk.length; i++) {
+                if (coordX == blk[i][0] && coordY == blk[i][1]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // checks if square in a tetromino matrix is part of board
+        function withinBoard(coordX, coordY, dir) {
+            if (direction == "down") {
+                if (coordX >= boardHeight) {
+                    return false;
+                }
+            }
+            if (direction == "left") {
+                if (coordY < 0) {
+                    return false;
+                }
+            }
+            if (direction == "right") {
+                if (coordY >= boardWidth) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // user input
+        document.addEventListener('keydown', function (e) {
+            //console.log(e.keyCode);
+            if (e.keyCode == 87) {
+                // user pressed 'w' for up
+                direction = "rot";
+                if (!(checkCollision(activeTet, direction))) {
+
+                    activeTet.rotate();
+                }
+            }
+            if (e.keyCode == 68) {
+                // user pressed 'd' for right
+                direction = "right";
+                if (!(checkCollision(activeTet, direction))) {
+                    activeTet.moveRight();
+                }
+            }
+            if (e.keyCode == 83) {
+                // user pressed "s" for down
+                direction = "down";
+                if (!(checkCollision(activeTet, direction))) {
+                    activeTet.moveDown();
+                }
+                else {
+                    // can't move downwards - about to create new tetromino
+                    createNew();
+                }
+            }
+            if (e.keyCode == 65) {
+                // user pressed 'a' for left
+                direction = "left";
+                if (!(checkCollision(activeTet, direction))) {
+                    activeTet.moveLeft();
+                }
+            }
+        });
+
+        // create new tetromino piece
+        function createNew() {            
+            let selectedPiece = Math.floor(Math.random() * 7);  // random number between 0 and 6
+            activeTet = new Tetromino(tetrominoShape[selectedPiece], tetrominoColor[selectedPiece], 0, 3, 0);
+            activeTet.draw();
+        }
+
+        // creation of first tetromino on board
+        createNew();
+    
+    </script>
+</body>
+</html>
