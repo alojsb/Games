@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Coordinate your Click</title>
+    <style>
+   
+        body{
+            background-color: darkred;
+            color: limegreen;
+            margin: 0;
+        }
+
+        .fullScreen{
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .center{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        div#container{
+            border: 1px solid pink;
+            font-size: 36px;
+        }
+
+        div#container > p{
+            margin: 10px 10px 0;
+        }
+
+        div#victoryScreen{
+            text-align: center;
+            background-color: black;
+            opacity: 0.65;
+        }
+
+        div#victoryScreen-inner{           
+            color: gold;
+            font-size: 120px;         
+        }
+
+        .hidden{
+            display: none;
+        }
+    
+    </style>
+</head>
+<body>
+    
+    <div id="container" class="fullScreen">
+
+        <p id="givenCoords"></p>
+        <p id="clickedCoords"></p>
+        <p id="attempts"></p>
+
+    </div>
+    <div id="victoryScreen" class="hidden fullScreen">
+        <div id="victoryScreen-inner" class="center">
+                <p>Victory!</p>
+                <button id="restart">Restart</button>
+        </div>
+    </div>
+
+    <script>
+    
+        // set variables
+        let container = document.getElementById("container");
+        let divWidth = screen.width;
+        let divHeight = screen.height;
+        let givenX = Math.round(Math.random() * divWidth);
+        let givenY = Math.round(Math.random() * divHeight);
+        let givenCoords = document.getElementById("givenCoords");
+        let clickedCoords = document.getElementById("clickedCoords");
+        let attempts = document.getElementById("attempts");
+        let counter = 0;
+        let vicScr = document.getElementById("victoryScreen");
+        let restart = document.getElementById("restart");
+
+        // display coordinates to find
+        givenCoords.innerText = "Find coordinates: (x: " + givenX + ", y: " + givenY + ")";
+
+        // detect click on screen and execute the following
+        container.addEventListener('click', function (e) {
+
+            counter++;
+            clickedCoords.innerText = "You clicked: (x: " + e.clientX + ", y: " + e.clientY + ")";
+            attempts.innerText = "Attempts: " + counter;
+
+            // Victory condition
+            if (e.clientX == givenX && e.clientY == givenY) {
+
+                givenCoords.style.color = "yellow";
+                clickedCoords.style.color = "yellow";
+
+                vicScr.classList.remove("hidden");
+            }
+        });
+
+        // restart game
+        restart.addEventListener('click', function () {
+            
+            vicScr.classList.add("hidden");
+            counter = 0;
+            givenX = Math.round(Math.random() * divWidth);
+            givenY = Math.round(Math.random() * divHeight);
+
+            givenCoords.innerText = "Find coordinates: (x: " + givenX + ", y: " + givenY + ")";
+            clickedCoords.innerText = "";
+            attempts.innerText = "";
+
+            givenCoords.style.color = "limegreen";
+            clickedCoords.style.color = "limegreen";
+        });
+
+    </script>
+
+</body>
+</html>
