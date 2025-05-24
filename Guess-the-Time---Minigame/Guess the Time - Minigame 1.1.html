@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Guess the Time - Minigame 1.1</title>
+    <style>
+    
+            .sakrij{
+                display: none;
+            }
+        
+        </style>
+</head>
+<body>
+    <div id="wrapper">
+            <p>Pokreni štopericu i zaustavi prije nego što isteknu 2 sekunde.</p>
+            <p id="isteklo" class="sakrij">Vrijeme je isteklo!</p>
+            <p id="ostatak" class="sakrij">Ostalo ti je bilo još <span id="vrijeme"></span> milisekundi.</p>
+    </div>
+
+    <button id="start">Pokreni štopericu</button>
+    <button id="stop">Zaustavi štopericu</button>
+
+    <script>
+
+        var ms = pocetna = 2000, sek = 0, sahatKula;
+
+        var start = document.getElementById('start');
+        var stop = document.getElementById('stop');
+
+        start.addEventListener('click', timer);
+        stop.addEventListener('click', stani);
+
+        stop.disabled = true;
+
+        // precizan timer
+
+        function timer() {
+            pocetna = 2000; // ovo treba da bi pocelo odbrojavanje uvijek od 2 sekunde
+            document.getElementById('isteklo').classList.add('sakrij');
+            document.getElementById('ostatak').classList.add('sakrij');
+            start.disabled = true;
+            stop.disabled = false;
+
+        var startTime = Date.now();
+
+            sahatKula = setInterval(function() {
+                var preostalo = pocetna - (Date.now() - startTime);
+                document.getElementById("vrijeme").innerHTML = (preostalo / 1000).toFixed(3);
+                if (preostalo < 0) {
+                    // preostalo = 0;
+                    clearInterval(sahatKula);
+                    document.getElementById('isteklo').classList.remove('sakrij');
+                    document.getElementById('ostatak').classList.remove('sakrij');
+                }
+            }, 1);
+        } 
+
+        // hiljaditinke (neprecizan timer)
+
+        // function timer(){
+        //     start.disabled = true;
+        //     stop.disabled = false;
+        //     sahatKula = setInterval(function(){
+        //         ms = ms - 1;
+        //         document.getElementById('vrijeme').innerHTML = ms;
+        //         if (ms === 0) {
+        //             clearInterval(sahatKula);
+        //             document.getElementById('isteklo').classList.remove('sakrij');
+        //             document.getElementById('ostatak').classList.remove('sakrij');
+        //         }
+        //     }, 1);
+        // }
+          
+        function stani() {
+            start.disabled = false;
+            stop.disabled = true;
+            clearInterval(sahatKula);
+            document.getElementById('ostatak').classList.remove('sakrij');
+        }
+
+    </script>
+</body>
+</html>
