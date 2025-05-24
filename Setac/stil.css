@@ -1,0 +1,189 @@
+*{
+    margin: 0;
+
+}
+
+/* osnovni elementi */
+
+body{
+    background-color: slategrey;
+}
+
+.glavni{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(7, 1fr);
+}
+
+.komande{
+    background-color: rgb(202, 202, 202);
+    grid-row: 1/9;
+    order: 1;
+    border: 10px ridge darkgray;
+    position: relative; /*zbog centriranja tabele*/
+}
+
+.pomocni{
+   background-color: rgb(202, 202, 202);
+   order: 3;
+   grid-column: 4;
+   grid-row: 1/9;
+   border: 10px ridge darkgray;
+}
+
+.header{
+   background-color: rgb(131, 131, 131);
+   grid-column: 2/4;
+   grid-row: 1;
+   order: 2;
+   height: 6vw;
+}
+
+.wrapper{
+    background-color: rgb(233, 233, 233);
+    border: 10px inset darkgray;
+    padding: 5px;
+    order: 4;
+    grid-row: 2/9;
+    grid-column: 2/4;
+
+    /*nested grid*/
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 5px;
+    
+}
+
+/* elementi komande */
+
+table{
+    position: absolute; /*zbog centriranja*/
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+td{
+    width: 100px;
+    height: 100px;
+    
+}
+
+input{
+    width: 100%;
+    height: 100%;
+}
+
+#up{
+    border-left: 8px groove darkgrey;
+    border-top: 8px groove darkgrey;
+    border-right: 8px groove darkgrey;
+    
+}
+
+#right{
+    border-top: 8px groove darkgrey;
+    border-right: 8px groove darkgrey;
+    border-bottom: 8px groove darkgrey;
+}
+
+#down{
+    border-right: 8px groove darkgrey;
+    border-bottom: 8px groove darkgrey;
+    border-left: 8px groove darkgrey;
+}
+
+#left{
+    border-bottom: 8px groove darkgrey;
+    border-left: 8px groove darkgrey;
+    border-top: 8px groove darkgrey;
+}
+/*stil šetača*/
+
+.walker{
+    background-color: rgb(88, 88, 88);
+}
+
+/*poruka*/
+
+#poruka{
+    font-family: 'Orbitron';
+    /* font-family: 'Geostar Fill'; */
+    font-size: 1.5vw;
+    color: white;
+    text-shadow: 2px 2px rgb(68, 68, 68);
+    padding: 20px 5px 20px 20px;
+    display: none;
+}
+
+@media only screen and (max-width: 1000px){
+
+    td{
+        width: 50px;
+        height: 50px;
+        
+    }
+    #poruka{
+        font-size: 1.5vw;
+        padding: 10px 5px 20px 20px;
+    }
+}
+
+
+@media only screen and (max-width: 750px){
+
+    .glavni{
+        grid-template-columns: repeat(9, 1fr);
+        grid-template-rows: repeat(16, 1fr);
+    }
+    .header{
+        height: 100%;
+        grid-column: 1/10;
+        grid-row: 1/3;
+        order: 1;
+    }
+    .wrapper{
+        height: 92vw;
+        grid-column: 1/10;
+        grid-row: 3/11;
+        order: 2;
+    }
+  
+    .komande{
+        grid-column: 1/10;
+        grid-row: 11/15;
+        order: 3;
+      
+    }
+    table{
+        position: absolute; /*zbog centriranja*/
+        top: 50%;
+        left: 30px;
+        transform: translate(0%, -50%)
+    }
+    td{
+        width: 14vw;
+        height: 14vw;
+        
+    }
+    .pomocni{
+        grid-column: initial;
+        grid-row: initial;
+        order: 4;
+        display: none;
+    }
+    #poruka{
+        font-size: 4.5vw;
+        padding: 20px 5px 20px 20px;
+    }
+}
+
+@media only screen and (max-width: 450px){
+    table{
+        position: absolute; /*zbog centriranja*/
+        top: 50%;
+        left: 30px;
+        transform: translate(-15%, -50%)
+    }
+}
