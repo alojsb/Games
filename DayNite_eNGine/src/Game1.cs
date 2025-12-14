@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using DayNite.Engine.Core;
+using DayNite.Game.Screens;
+
 
 namespace src;
 
@@ -20,6 +22,11 @@ public class Game1 : Game
     protected override void Initialize()
     {
         _engine = new Engine(GraphicsDevice);
+
+        _engine.Screens.SetScreen(
+            new TitleScreen(_engine.Input)
+        );
+
         base.Initialize();
     }
 
