@@ -46,7 +46,13 @@ public class BitmapFont
         }
     }
 
-public void DrawString(SpriteBatch spriteBatch, string text, Vector2 position, Color color)
+public void DrawString(
+        SpriteBatch spriteBatch, 
+        string text, 
+        Vector2 position, 
+        Color color,
+        float scale = 1f
+    )
     {
         Vector2 cursor = position;
 
@@ -55,19 +61,19 @@ public void DrawString(SpriteBatch spriteBatch, string text, Vector2 position, C
             if (c == '\n')
             {
                 cursor.X = position.X;
-                cursor.Y += _cellSize;
+                cursor.Y += _cellSize * scale;
                 continue;
             }
 
             if (c == ' ')
             {
-                cursor.X += _cellSize;
+                cursor.X += _cellSize * scale;
                 continue;
             }
 
             if (!_glyphMap.TryGetValue(c, out Point gridPos))
             {
-                cursor.X += _cellSize;
+                cursor.X += _cellSize * scale;
                 continue;
             }
 
@@ -82,10 +88,15 @@ public void DrawString(SpriteBatch spriteBatch, string text, Vector2 position, C
                 _texture,
                 new Vector2(cursor.X, cursor.Y - _baselineOffset),
                 source,
-                color
+                color,
+                rotation: 0f,
+                origin: Vector2.Zero,
+                scale: scale,
+                effects: SpriteEffects.None,
+                layerDepth: 0f
             );
 
-            cursor.X += _cellSize;
+            cursor.X += _cellSize * scale;
         }
     }
 }

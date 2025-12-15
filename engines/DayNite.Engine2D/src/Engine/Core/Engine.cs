@@ -38,7 +38,7 @@ public class Engine
             cellSize: 32,
             baselineOffset: 4 // tweak between 3–6 if needed
         );
-        _debugText = new DebugTextRenderer(bitmapFont);
+        _debugText = new DebugTextRenderer(bitmapFont, scale: 0.375f);
         _camera = new Camera2D(graphicsDevice.Viewport);
         _renderer = new SpriteRenderer(_spriteBatch);
         _testSprite = ProceduralTextureFactory.CreateSolid(graphicsDevice, 32, 32, Color.White);
@@ -48,7 +48,7 @@ public class Engine
     public void Update(GameTime gameTime)
     {
         _input.Update();
-        
+
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         float panSpeed = 300f;
