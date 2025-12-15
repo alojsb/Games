@@ -17,6 +17,9 @@ public class Engine
     private readonly ScreenManager _screenManager;
     public ScreenManager Screens => _screenManager;
     private DebugTextRenderer _debugText;
+    private readonly Camera2D _camera;
+    public Camera2D Camera => _camera;
+
 
     public Engine(GraphicsDevice graphicsDevice, ContentManager content)
     {
@@ -33,6 +36,7 @@ public class Engine
             baselineOffset: 4 // tweak between 3–6 if needed
         );
         _debugText = new DebugTextRenderer(bitmapFont);
+        _camera = new Camera2D(graphicsDevice.Viewport);
 
     }
 
@@ -52,9 +56,10 @@ public class Engine
         _graphicsDevice.Clear(Color.Black);
 
         _spriteBatch.Begin(
+            transformMatrix: _camera.ViewMatrix,
             samplerState: SamplerState.PointClamp
         );
-        _debugText.Draw(_spriteBatch, "DayNite Engine running", 10, 10);
+        _debugText.Draw(_spriteBatch, "DayNite Engine running", new Vector2(10, 10));
         _screenManager.Draw(_spriteBatch);
         _spriteBatch.End();
     }

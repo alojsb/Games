@@ -12,13 +12,23 @@ public class DebugTextRenderer
         _font = font;
     }
 
+    public void Draw(
+        SpriteBatch spriteBatch,
+        string text,
+        Vector2 position,
+        Color color)
+    {
+        _font.DrawString(spriteBatch, text, position, color);
+    }
+
     public void Draw(SpriteBatch spriteBatch, string text, int x, int y)
     {
-        _font.DrawString(
-            spriteBatch,
-            text,
-            new Vector2(x, y),
-            Color.White
-        );
+        Draw(spriteBatch, text, new Vector2(x, y), Color.White);
+    }
+
+    public void Draw(SpriteBatch spriteBatch, string text, Vector2 position)
+    {
+        Draw(spriteBatch, text, position, Color.White);
     }
 }
+
