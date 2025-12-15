@@ -21,7 +21,8 @@ public class Engine
     public Camera2D Camera => _camera;
     private readonly SpriteRenderer _renderer;
     public SpriteRenderer Renderer => _renderer;
-    private readonly Texture2D _testSprite;
+    private readonly World _world;
+
 
 
     public Engine(GraphicsDevice graphicsDevice, ContentManager content)
@@ -41,7 +42,24 @@ public class Engine
         _debugText = new DebugTextRenderer(bitmapFont, scale: 0.375f);
         _camera = new Camera2D(graphicsDevice.Viewport);
         _renderer = new SpriteRenderer(_spriteBatch);
-        _testSprite = ProceduralTextureFactory.CreateSolid(graphicsDevice, 32, 32, Color.White);
+        _world = new World();
+
+        // temporary player creation
+        var playerTexture = ProceduralTextureFactory.CreateSolid(
+            graphicsDevice,
+            32,
+            32,
+            Color.CornflowerBlue
+        );
+
+        var player = new Player(
+            playerTexture,
+            _renderer,
+            _input,
+            new Vector2(100, 100)
+        );
+
+        _world.Add(player);
 
     }
 
@@ -89,6 +107,8 @@ public class Engine
             System.Diagnostics.Debug.WriteLine("LEFT is held");
         }
 
+        _world.Update(gameTime);
+
     }
 
     public void Draw(GameTime gameTime)
@@ -98,19 +118,13 @@ public class Engine
 
         // World pass (camera)
         _renderer.BeginWorld(_camera);
-        _renderer.Draw(_testSprite, new Vector2(100, 100));
-        _renderer.Draw(_testSprite, new Vector2(0, 0));
-        _renderer.Draw(_testSprite, new Vector2(200, 0));
-        _renderer.Draw(_testSprite, new Vector2(0, 200));
-        _renderer.Draw(_testSprite, new Vector2(200, 200));
-
-        _screenManager.Draw(_spriteBatch);
+        _world.Draw(gameTime);
         _renderer.End();
 
+
         // UI/Debug pass (no camera)
-        _spriteBatch.Begin(
-            samplerState: SamplerState.PointClamp
-        );
+        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+
         _debugText.Draw(_spriteBatch, "DayNite Engine running", new Vector2(10, 10));
         _debugText.Draw(
             _spriteBatch,
@@ -118,6 +132,7 @@ public class Engine
             new Vector2(10, 40),
             Color.White
         );
+        
         _screenManager.Draw(_spriteBatch);
         _spriteBatch.End();
     }
