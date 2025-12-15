@@ -8,5 +8,8 @@ public enum GameAction
     MoveRight,
     Confirm,
     Cancel,
-    Pause
+    Pause,
+    ZoomIn,
+    ZoomOut,
+    CameraReset
 }

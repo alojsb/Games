@@ -16,7 +16,11 @@ public class InputManager
         { GameAction.MoveRight, Keys.D },
         { GameAction.Confirm, Keys.Enter },
         { GameAction.Cancel, Keys.Escape },
-        { GameAction.Pause, Keys.Space }
+        { GameAction.Pause, Keys.Space },
+        { GameAction.ZoomIn, Keys.E },
+        { GameAction.ZoomOut, Keys.Q },
+        { GameAction.CameraReset, Keys.R }
+
     };
 
     public void Update()

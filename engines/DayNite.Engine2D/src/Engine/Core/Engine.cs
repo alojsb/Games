@@ -48,12 +48,47 @@ public class Engine
     public void Update(GameTime gameTime)
     {
         _input.Update();
+        
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        if (_input.IsPressed(GameAction.Pause))
+        float panSpeed = 300f;
+        float zoomSpeed = 1.5f;
+
+        Vector2 pan = Vector2.Zero;
+
+        if (_input.IsDown(GameAction.MoveUp)) pan.Y -= 1f;
+        if (_input.IsDown(GameAction.MoveDown)) pan.Y += 1f;
+        if (_input.IsDown(GameAction.MoveLeft)) pan.X -= 1f;
+        if (_input.IsDown(GameAction.MoveRight)) pan.X += 1f;
+
+        if (pan != Vector2.Zero)
         {
-            System.Diagnostics.Debug.WriteLine("Pause pressed");
+            pan.Normalize();
+            _camera.Position += pan * panSpeed * dt / _camera.Zoom;
         }
-        _screenManager.Update(gameTime);
+
+        // Zoom
+        if (_input.IsDown(GameAction.ZoomIn))
+            _camera.Zoom *= 1f + zoomSpeed * dt;
+
+        if (_input.IsDown(GameAction.ZoomOut))
+            _camera.Zoom *= 1f - zoomSpeed * dt;
+
+        _camera.Zoom = MathHelper.Clamp(_camera.Zoom, 0.25f, 6f);
+
+        // Reset
+        if (_input.IsPressed(GameAction.CameraReset))
+        {
+            _camera.Position = Vector2.Zero;
+            _camera.Zoom = 1f;
+            _camera.Rotation = 0f;
+        }
+
+        if (_input.IsDown(GameAction.MoveLeft))
+        {
+            System.Diagnostics.Debug.WriteLine("LEFT is held");
+        }
+
     }
 
     public void Draw(GameTime gameTime)
@@ -64,6 +99,11 @@ public class Engine
         // World pass (camera)
         _renderer.BeginWorld(_camera);
         _renderer.Draw(_testSprite, new Vector2(100, 100));
+        _renderer.Draw(_testSprite, new Vector2(0, 0));
+        _renderer.Draw(_testSprite, new Vector2(200, 0));
+        _renderer.Draw(_testSprite, new Vector2(0, 200));
+        _renderer.Draw(_testSprite, new Vector2(200, 200));
+
         _screenManager.Draw(_spriteBatch);
         _renderer.End();
 
@@ -72,6 +112,12 @@ public class Engine
             samplerState: SamplerState.PointClamp
         );
         _debugText.Draw(_spriteBatch, "DayNite Engine running", new Vector2(10, 10));
+        _debugText.Draw(
+            _spriteBatch,
+            $"CamPos: {_camera.Position} Zoom: {_camera.Zoom:0.00}",
+            new Vector2(10, 40),
+            Color.White
+        );
         _screenManager.Draw(_spriteBatch);
         _spriteBatch.End();
     }
