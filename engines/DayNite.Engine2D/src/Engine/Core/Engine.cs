@@ -19,6 +19,9 @@ public class Engine
     private DebugTextRenderer _debugText;
     private readonly Camera2D _camera;
     public Camera2D Camera => _camera;
+    private readonly SpriteRenderer _renderer;
+    public SpriteRenderer Renderer => _renderer;
+    private readonly Texture2D _testSprite;
 
 
     public Engine(GraphicsDevice graphicsDevice, ContentManager content)
@@ -37,6 +40,8 @@ public class Engine
         );
         _debugText = new DebugTextRenderer(bitmapFont);
         _camera = new Camera2D(graphicsDevice.Viewport);
+        _renderer = new SpriteRenderer(_spriteBatch);
+        _testSprite = ProceduralTextureFactory.CreateSolid(graphicsDevice, 32, 32, Color.White);
 
     }
 
@@ -55,8 +60,15 @@ public class Engine
     {
         _graphicsDevice.Clear(Color.Black);
 
+
+        // World pass (camera)
+        _renderer.BeginWorld(_camera);
+        _renderer.Draw(_testSprite, new Vector2(100, 100));
+        _screenManager.Draw(_spriteBatch);
+        _renderer.End();
+
+        // UI/Debug pass (no camera)
         _spriteBatch.Begin(
-            transformMatrix: _camera.ViewMatrix,
             samplerState: SamplerState.PointClamp
         );
         _debugText.Draw(_spriteBatch, "DayNite Engine running", new Vector2(10, 10));
