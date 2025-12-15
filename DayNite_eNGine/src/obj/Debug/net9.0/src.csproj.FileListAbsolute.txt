@@ -32,3 +32,4 @@ C:\_dev\_repos\alojsb\Games\DayNite_eNGine\src\obj\Debug\net9.0\refint\src.dll
 C:\_dev\_repos\alojsb\Games\DayNite_eNGine\src\obj\Debug\net9.0\src.pdb
 C:\_dev\_repos\alojsb\Games\DayNite_eNGine\src\obj\Debug\net9.0\src.genruntimeconfig.cache
 C:\_dev\_repos\alojsb\Games\DayNite_eNGine\src\obj\Debug\net9.0\ref\src.dll
+C:\_dev\_repos\alojsb\Games\DayNite_eNGine\src\bin\Debug\net9.0\Content\Fonts\font.xnb
