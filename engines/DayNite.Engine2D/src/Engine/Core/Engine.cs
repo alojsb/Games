@@ -22,6 +22,8 @@ public class Engine
     private readonly SpriteRenderer _renderer;
     public SpriteRenderer Renderer => _renderer;
     private readonly World _world;
+    private readonly DebugGridRenderer _grid;
+    private Player _player;
 
 
 
@@ -52,14 +54,23 @@ public class Engine
             Color.CornflowerBlue
         );
 
-        var player = new Player(
+        _player = new Player(
             playerTexture,
             _renderer,
             _input,
             new Vector2(100, 100)
         );
 
-        _world.Add(player);
+        _world.Add(_player);
+        _camera.Position = _player.Position;
+        _camera.Target = _player.Position;
+
+        // temporary debug grid
+        _grid = new DebugGridRenderer(
+        graphicsDevice,
+        cellSize: 64,
+        color: new Color(255, 255, 255, 40)
+);
 
     }
 
@@ -69,21 +80,7 @@ public class Engine
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        float panSpeed = 300f;
         float zoomSpeed = 1.5f;
-
-        Vector2 pan = Vector2.Zero;
-
-        if (_input.IsDown(GameAction.MoveUp)) pan.Y -= 1f;
-        if (_input.IsDown(GameAction.MoveDown)) pan.Y += 1f;
-        if (_input.IsDown(GameAction.MoveLeft)) pan.X -= 1f;
-        if (_input.IsDown(GameAction.MoveRight)) pan.X += 1f;
-
-        if (pan != Vector2.Zero)
-        {
-            pan.Normalize();
-            _camera.Position += pan * panSpeed * dt / _camera.Zoom;
-        }
 
         // Zoom
         if (_input.IsDown(GameAction.ZoomIn))
@@ -109,6 +106,10 @@ public class Engine
 
         _world.Update(gameTime);
 
+        // Follow player
+        _camera.Target = _player.Position;
+        _camera.Update(gameTime);
+
     }
 
     public void Draw(GameTime gameTime)
@@ -118,6 +119,7 @@ public class Engine
 
         // World pass (camera)
         _renderer.BeginWorld(_camera);
+        _grid.Draw(_spriteBatch, _camera);
         _world.Draw(gameTime);
         _renderer.End();
 

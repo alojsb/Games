@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace DayNite.Engine.Graphics;
 
@@ -8,6 +9,9 @@ public class Camera2D
     public Vector2 Position { get; set; } = Vector2.Zero;
     public float Rotation { get; set; } = 0f;
     public float Zoom { get; set; } = 1f;
+    public Vector2 Target { get; set; }
+    public float FollowLerp = 12f; // smoothing strength
+
 
     private readonly Viewport _viewport;
 
@@ -36,4 +40,16 @@ public class Camera2D
     {
         return Vector2.Transform(worldPosition, ViewMatrix);
     }
+
+    public void Update(GameTime gameTime)
+{
+    float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+    Position = Vector2.Lerp(
+        Position,
+        Target,
+        1f - MathF.Exp(-FollowLerp * dt)
+    );
+}
+
 }
