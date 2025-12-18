@@ -21,11 +21,17 @@ public class SpriteEntity : Entity
 
     public override void Draw(GameTime gameTime)
     {
+        Vector2 origin = new Vector2(
+            Texture.Width / 2f,
+            Texture.Height / 2f
+        );
+
         Renderer.Draw(
             Texture,
             Position,
             rotation: Rotation,
-            scale: Scale
+            scale: Scale,
+            origin: origin
         );
     }
 }
