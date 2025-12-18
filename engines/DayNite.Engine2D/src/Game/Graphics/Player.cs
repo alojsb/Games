@@ -2,6 +2,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using DayNite.Engine.Graphics;
 using DayNite.Engine.Input;
+using DayNite.Engine.Core;
+using System;
 
 public class Player : SpriteEntity
 {
@@ -30,6 +32,10 @@ public class Player : SpriteEntity
 
         if (move != Vector2.Zero)
         {
+                if (Math.Abs(move.X) > Math.Abs(move.Y))
+        Facing = move.X > 0 ? FacingDirection.Right : FacingDirection.Left;
+    else
+        Facing = move.Y > 0 ? FacingDirection.Down : FacingDirection.Up;
             move.Normalize();
             Position += move * _speed * dt;
         }

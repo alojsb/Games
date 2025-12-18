@@ -134,7 +134,13 @@ public class Engine
             new Vector2(10, 40),
             Color.White
         );
-        
+        _debugText.Draw(
+            _spriteBatch,
+            $"Facing: {_player.Facing}",
+            new Vector2(10, 70),
+            Color.White
+        );
+
         _screenManager.Draw(_spriteBatch);
         _spriteBatch.End();
     }
